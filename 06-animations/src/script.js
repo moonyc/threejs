@@ -1,5 +1,7 @@
 import './style.css'
 import * as THREE from 'three'
+import gsap from 'gsap'
+console.log( gsap)
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -31,20 +33,13 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 
 // Clock
-const clock = new THREE.Clock()
+gsap.to(mesh.position, { duration: 1, delay:1, x: 2}) // gsap has its own tick, you don't need to tell to gsap to update itself, but you need to put the renderer in the tick
 // Animations 
 
 const tick = () => 
 {
    // Clock
-   const elapsedTime = clock.getElapsedTime()
-   console.log(elapsedTime)
-
-   // Update Objects
-    //mesh.rotation.y = elapsedTime * Math.PI * 2 // one rotation each second
-    mesh.position.y = Math.sin(elapsedTime)
-    mesh.position.x = Math.cos(elapsedTime)
-    camera.lookAt(mesh.position) // don't use the getDelta()
+    
     // Render 
     renderer.render(scene, camera)
 
