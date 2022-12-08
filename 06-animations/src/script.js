@@ -44,6 +44,7 @@ const tick = () =>
     //mesh.rotation.y = elapsedTime * Math.PI * 2 // one rotation each second
     mesh.position.y = Math.sin(elapsedTime)
     mesh.position.x = Math.cos(elapsedTime)
+    camera.lookAt(mesh.position) // don't use the getDelta()
     // Render 
     renderer.render(scene, camera)
 
