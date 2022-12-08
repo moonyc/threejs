@@ -30,14 +30,27 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 
-
+// Time
+let time = Date.now() // this variable needs to change
 // Animations 
 
 const tick = () => 
 {
+    // Time
+    const currentTime = Date.now() // we use this to get the current the timestamp
+
+    // Delta
+    const deltaTime = currentTime - time
+    time = currentTime
+
+    console.log(deltaTime)
+
+
     // Update Objects
      //mesh.position.x -= 0.01
-     mesh.rotation.y += 0.01 
+    // mesh.rotation.y += 0.01 
+     // make the object rotate at the right speed
+     mesh.rotation.y += 0.001 * deltaTime
 
     // Render 
     renderer.render(scene, camera)
