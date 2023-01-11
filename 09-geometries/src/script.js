@@ -16,17 +16,18 @@ const scene = new THREE.Scene()
 //const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2)
 // how to store buffer geometry
 // float32array is plain javascript -> typed array, it can only store floats. fixed length and easier to handle for the computer
-const positionsArray = new Float32Array([
-    0,0,0,
-    0,1,0,
-    1,0,0
-]) // one dimension array
-const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3) // three correspons to how many values compose the vertex
+
 const geometry = new THREE.BufferGeometry()
-geometry.setAttribute('position', positionsAttribute) // positions is the name used in the shaders
-// we didn't provided faces, threejs compiled the triangle as a triangle
 
+const count = 500
+const positionsArray = new Float32Array(count * 3 * 3)
 
+for(let i = 0; i < count *3 * 3; i++)
+{
+    positionsArray[i]= Math.random()
+}
+const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3)
+geometry.setAttribute('position', positionsAttribute)
 const material = new THREE.MeshBasicMaterial({
      color: 0xff0000,
      wireframe: true, 
