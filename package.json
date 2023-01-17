@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "gsap": "^3.5.1"
+    "gsap": "^3.11.4"
   }
 }
