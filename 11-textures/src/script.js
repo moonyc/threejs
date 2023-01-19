@@ -1,25 +1,48 @@
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { LinearFilter } from 'three'
 /**
  * Textures
  */
- const textureLoader = new THREE.TextureLoader()
- const texture = textureLoader.load(
-    '/textures/door/color.jpg',
-    () =>
-    {
-       console.log('load')
-    },
-    () =>
-    {
-       console.log('progress') // progress never works
-    },
-    () => 
-    {
-      console.log('error')
-    }
-    )
+ const loadingManager = new THREE.LoadingManager()
+
+ loadingManager.onStart = () => 
+ {
+    console.log('onStart')
+ }
+ loadingManager.onProgress = () => 
+ {
+    console.log('onProgress')
+ }
+ loadingManager.onError = () => 
+ {
+    console.log('onError')
+ }
+
+ const textureLoader = new THREE.TextureLoader(loadingManager)
+ const colorTexture = textureLoader.load('/textures/minecraft.png',)
+ const alphaTexture= textureLoader.load('/textures/door/alpha.jpg',)
+ const heightTexture = textureLoader.load('/textures/door/height.jpg',)
+ const normalTexture = textureLoader.load('/textures/door/normal.jpg',)
+ const ambientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg',)
+ const metalnessTexture = textureLoader.load('/textures/door/metalness.jpg',)
+ const roughnessTexture = textureLoader.load('/textures/door/roughness.jpg',)
+
+//  colorTexture.repeat.x = 2
+//  colorTexture.repeat.y = 3
+//  colorTexture.wrapS = THREE.MirroredRepeatWrapping
+//  colorTexture.wrapT = THREE.MirroredRepeatWrapping
+
+//  colorTexture.offset.x = 0.5
+//  colorTexture.offset.y = 0.5
+
+//  colorTexture.rotation = Math.PI / 4
+//  colorTexture.center.x = 0.5
+//  colorTexture.center.y = 0.5
+colorTexture.generateMipmaps = false
+//colorTexture.minFilter = THREE.NearestFilter
+colorTexture.magFilter = THREE.NearestFilter
 /**
  * Base
  */
@@ -32,8 +55,8 @@ const scene = new THREE.Scene()
 /**
  * Object
  */
-const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ map: texture })
+const geometry = new THREE.BoxBufferGeometry(1, 1, 1)
+const material = new THREE.MeshBasicMaterial({ map: colorTexture })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 
