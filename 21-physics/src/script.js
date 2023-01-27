@@ -3,12 +3,41 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
 import CANNON from 'cannon'
 
+
 // console.log(CANNON)
 
 /**
  * Debug
  */
 const gui = new dat.GUI()
+const debugObject = {}
+debugObject.createSphere = () => {
+  createSphere(
+    0.5, 
+    {
+        x: ( Math.random() - 0.5 ) * 10, 
+        y: 3, 
+        z: ( Math.random() - 0.5 ) * 10, 
+    }
+    )
+}
+
+debugObject.createBox = () => {
+   
+    createBox(
+      Math.random(), 
+      Math.random(),
+      Math.random(),
+      {
+          x: ( Math.random() - 0.5 ) * 10, 
+          y: 3, 
+          z: ( Math.random() - 0.5 ) * 10, 
+      }
+      )
+  }
+
+gui.add(debugObject, 'createSphere')
+gui.add(debugObject, 'createBox')
 
 /**
  * Base
@@ -19,6 +48,14 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+/**
+ * Sounds
+ */
+const hitSound = new Audio('/sounds/hit.mp3')
+const playHitSound = () => 
+{
+    hitSound.play()
+}
 /**
  * Textures
  */
@@ -39,36 +76,40 @@ const environmentMapTexture = cubeTextureLoader.load([
  */
 // World
 const world = new CANNON.World()
-
+// Performances
+world.broadphase = new CANNON.SAPBroadphase(world)
+world.allowSleep = true
+// Gravity
 world.gravity.set(0, -9.82, 0)  // Vec3
 
 // Materials
 
-const concreteMaterial = new CANNON.Material('concrete')
-const plasticMaterial = new CANNON.Material('plastic')
+const defaultMaterial = new CANNON.Material('concrete')
 
-const concretePlasticContactMaterial = new CANNON.ContactMaterial(
-    concreteMaterial,
-    plasticMaterial,
+
+const defaultContactMaterial = new CANNON.ContactMaterial(
+    defaultMaterial,
+    defaultMaterial,
     {
         friction: 0.1,
-        restitution: 0.9
+        restitution: 0.7
     }
 )
 
-world.addContactMaterial(concretePlasticContactMaterial)
+world.addContactMaterial(defaultContactMaterial)
+world.defaultContactMaterial = defaultContactMaterial
 
-// Sphere
+// // Sphere
 
-const sphereShape = new CANNON.Sphere()
-const sphereBody = new CANNON.Body({
-    mass: 1,
-    position: new CANNON.Vec3(0, 3, 0),
-    shape: sphereShape,
-    material: plasticMaterial
-})
+// const sphereShape = new CANNON.Sphere()
+// const sphereBody = new CANNON.Body({
+//     mass: 1,
+//     position: new CANNON.Vec3(0, 3, 0),
+//     shape: sphereShape,
+//     material: defaultMaterial
+// })
 
-world.addBody(sphereBody)
+// world.addBody(sphereBody)
 
 
 // Floor
@@ -78,12 +119,12 @@ const floorBody = new CANNON.Body()
 
 floorBody.mass = 0 // the object is static
 floorBody.addShape(floorShape)
-floorBody.material = concreteMaterial
+floorBody.material = defaultMaterial
 floorBody.quaternion.setFromAxisAngle(
     new CANNON.Vec3( -1, 0, 0 ),
     Math.PI * 0.5
 )
-
+// sphereBody.applyLocalForce(new CANNON.Vec3(150, 0, 0), new CANNON.Vec3(0, 0, 0))
 world.addBody(floorBody)
 
 
@@ -91,18 +132,18 @@ world.addBody(floorBody)
 /**
  * Test sphere
  */
-const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.5, 32, 32),
-    new THREE.MeshStandardMaterial({
-        metalness: 0.3,
-        roughness: 0.4,
-        envMap: environmentMapTexture,
-        envMapIntensity: 0.5
-    })
-)
-sphere.castShadow = true
-sphere.position.y = 0.5
-scene.add(sphere)
+// const sphere = new THREE.Mesh(
+//     new THREE.SphereGeometry(0.5, 32, 32),
+//     new THREE.MeshStandardMaterial({
+//         metalness: 0.3,
+//         roughness: 0.4,
+//         envMap: environmentMapTexture,
+//         envMapIntensity: 0.5
+//     })
+// )
+// sphere.castShadow = true
+// sphere.position.y = 0.5
+// scene.add(sphere)
 
 /**
  * Floor
@@ -120,6 +161,7 @@ const floor = new THREE.Mesh(
 floor.receiveShadow = true
 floor.rotation.x = - Math.PI * 0.5
 scene.add(floor)
+floor.position.y = 0
 
 /**
  * Lights
@@ -166,7 +208,7 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(- 3, 3, 3)
+camera.position.set(- 3, 3, -3)
 scene.add(camera)
 
 // Controls
@@ -185,6 +227,92 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 /**
+ * Utils
+ */
+const objectsToUpdate = []
+
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
+const boxMaterial = new THREE.MeshStandardMaterial({
+    metalness: 0.3,
+    roughness: 0.4,
+    envMap: environmentMapTexture
+})
+
+const createBox = ( width, height, depth, position ) => 
+{
+    // THREEJS Mesh
+   const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial)
+   boxMesh.scale.set(width, height, depth)
+   boxMesh.castShadow = true
+   boxMesh.position.copy(position)
+   scene.add(boxMesh)
+
+   // CANNON BODY
+   const boxShape = new CANNON.Box(new CANNON.Vec3(width * 0.5, height * 0.5, depth * 0.5))
+   const boxBody = new CANNON.Body(
+    {
+        mass: 5,
+        position: new CANNON.Vec3(0, 3, 0),
+        shape: boxShape,
+        material: defaultMaterial,
+
+    }
+   )
+   boxBody.position.copy(position)
+   world.addBody(boxBody)
+  // Save objects to update
+  objectsToUpdate.push({
+    mesh: boxMesh,
+    body: boxBody
+  })
+   console.log(objectsToUpdate)
+}
+
+createBox(Math.random(), Math.random(), Math.random(), {x:-1, y:4, z: 0})
+
+
+const sphereGeometry =  new THREE.SphereGeometry(1, 20, 20)
+const sphereMaterial = new THREE.MeshStandardMaterial({
+    metalness: 0.3,
+    roughness: 0.4,
+    envMap: environmentMapTexture
+})
+const createSphere = (radius, position) => 
+{
+    // THREEjs mesh
+    const mesh = new THREE.Mesh( sphereGeometry, sphereMaterial )
+    mesh.scale.set(radius, radius, radius)
+    mesh.castShadow = true
+    mesh.position.copy(position)
+    scene.add(mesh)
+
+    // Cannon.js body
+    const shape = new CANNON.Sphere(radius)
+    const body = new CANNON.Body(
+        {
+        mass:1,
+        position: new CANNON.Vec3(0, 3, 0),
+        shape,
+        material: defaultMaterial
+    }
+    )
+
+    body.position.copy(position)
+    world.addBody(body)
+
+    // Save in objects to update
+    objectsToUpdate.push({
+        mesh: mesh,
+        body: body
+    })
+
+}
+
+createSphere(0.5, {x: 0, y: 3, z: 0})
+
+
+// console.log(objectsToUpdate[0].mesh.position)
+/**
  * Animate
  */
 const clock = new THREE.Clock()
@@ -196,8 +324,16 @@ const tick = () =>
     const deltaTime = elapsedTime - oldElapsedTime
     oldElapsedTime = elapsedTime
 
+
     // Update physics world
+    // sphereBody.applyForce( new CANNON.Vec3(-0.5, 0, 0), sphereBody.position)
     world.step(1 / 6, deltaTime, 3)
+
+    for(const object of objectsToUpdate) 
+    {
+        object.mesh.position.copy(object.body.position)
+        object.mesh.quaternion.copy(object.body.quaternion)
+    }
 
     // Update threejs world
 
@@ -205,7 +341,7 @@ const tick = () =>
     // sphere.position.y = sphereBody.position.y
     // sphere.position.z = sphereBody.position.z
     // alternative -> use the copy function
-    sphere.position.copy(sphereBody.position)
+    // sphere.position.copy(sphereBody.position)
 
     // Update controls
     controls.update()
