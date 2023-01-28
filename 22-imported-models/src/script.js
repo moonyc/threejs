@@ -1,8 +1,10 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
 import * as dat from 'lil-gui' 
 
+// Read about Web Assembly 
 
 /**
  * Base
@@ -19,31 +21,22 @@ const scene = new THREE.Scene()
 /**
  * Models
  */
+const dracoLoader = new DRACOLoader()
+dracoLoader.setDecoderPath('/draco/')
 const gltfLoader = new GLTFLoader()
+gltfLoader.setDRACOLoader(dracoLoader)
+
 gltfLoader.load(
-    '/models/FlightHelmet/glTF/FlightHelmet.gltf',
-    (gltf) => 
+    '/models/Duck/glTF-Draco/Duck.gltf',
+    (draco) => 
     {
        console.log('success')
-       
-       //scene.add(gltf.scene)
-    //    for(const child of gltf.scene.children)
-    //    {
-    //      scene.add(child) 
-    //     // we don't have  anymore, because every time 
-    //     // one child get added to our scene, it gets removed for the 
-    //     // scene of the model. This fuck up the for loop
-
-    //    }
-    //    while(gltf.scene.children.length) // first solution
-    //    {
-    //     scene.add(gltf.scene.children[0])
-    //    }
-        const children = [...gltf.scene.children] // the spread operator takes the values inside the array 
-        for( const child of children )
-        {
-            scene.add(child)
-        }
+       scene.add(draco.scene)
+        // const children = [...gltf.scene.children] // the spread operator takes the values inside the array 
+        // for( const child of children)
+        // {
+        //     scene.add(child)
+        // }
     },
     () => 
     {
