@@ -21,12 +21,29 @@ const scene = new THREE.Scene()
  */
 const gltfLoader = new GLTFLoader()
 gltfLoader.load(
-    '/models/Duck/glTF-Embedded/Duck.gltf',
+    '/models/FlightHelmet/glTF/FlightHelmet.gltf',
     (gltf) => 
     {
        console.log('success')
        
-       scene.add(gltf.scene.children[0])
+       //scene.add(gltf.scene)
+    //    for(const child of gltf.scene.children)
+    //    {
+    //      scene.add(child) 
+    //     // we don't have  anymore, because every time 
+    //     // one child get added to our scene, it gets removed for the 
+    //     // scene of the model. This fuck up the for loop
+
+    //    }
+    //    while(gltf.scene.children.length) // first solution
+    //    {
+    //     scene.add(gltf.scene.children[0])
+    //    }
+        const children = [...gltf.scene.children] // the spread operator takes the values inside the array 
+        for( const child of children )
+        {
+            scene.add(child)
+        }
     },
     () => 
     {
