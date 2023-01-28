@@ -26,17 +26,20 @@ dracoLoader.setDecoderPath('/draco/')
 const gltfLoader = new GLTFLoader()
 gltfLoader.setDRACOLoader(dracoLoader)
 
+// initialize mixer so that you'll be able to update it in the tick function
+let mixer = null 
 gltfLoader.load(
-    '/models/Duck/glTF-Draco/Duck.gltf',
-    (draco) => 
+    '/models/Fox/glTF/Fox.gltf',
+    (gltf) => 
     {
+       mixer = new THREE.AnimationMixer(gltf.scene)
+       const action = mixer.clipAction(gltf.animations[2])
+
+       action.play()
+
        console.log('success')
-       scene.add(draco.scene)
-        // const children = [...gltf.scene.children] // the spread operator takes the values inside the array 
-        // for( const child of children)
-        // {
-        //     scene.add(child)
-        // }
+       gltf.scene.scale.set(0.025, 0.025, 0.025)
+       scene.add(gltf.scene)
     },
     () => 
     {
@@ -137,6 +140,12 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
+
+    // Update Mixer
+    if(mixer !== null)
+    {
+        mixer.update(deltaTime)
+    }
 
     // Update controls
     controls.update()
