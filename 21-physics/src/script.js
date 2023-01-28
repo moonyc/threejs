@@ -1,10 +1,10 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
-import CANNON from 'cannon'
+import * as CANNON from 'cannon-es'
 
+// Use workers to improve the performance!!
 
-// console.log(CANNON)
 
 /**
  * Debug
@@ -36,8 +36,24 @@ debugObject.createBox = () => {
       )
   }
 
+debugObject.reset = () => 
+{
+    for(const object of objectsToUpdate)
+    {
+        // Remove Body
+        object.body.removeEventListener('collide', playHitSound)
+        world.removeBody(object.body)
+
+        // Remove Mesh
+        scene.remove(object.mesh)
+
+    }
+    objectsToUpdate.splice(0, objectsToUpdate.length)
+}
+
 gui.add(debugObject, 'createSphere')
 gui.add(debugObject, 'createBox')
+gui.add(debugObject, 'reset')
 
 /**
  * Base
@@ -52,9 +68,16 @@ const scene = new THREE.Scene()
  * Sounds
  */
 const hitSound = new Audio('/sounds/hit.mp3')
-const playHitSound = () => 
+const playHitSound = (collision) => 
 {
-    hitSound.play()
+    const impactStrength = collision.contact.getImpactVelocityAlongNormal()
+    if ( impactStrength > 1.5)
+    {
+        hitSound.volume = Math.random()
+        hitSound.currentTime = 0
+        hitSound.play()
+    }
+    
 }
 /**
  * Textures
@@ -99,18 +122,6 @@ const defaultContactMaterial = new CANNON.ContactMaterial(
 world.addContactMaterial(defaultContactMaterial)
 world.defaultContactMaterial = defaultContactMaterial
 
-// // Sphere
-
-// const sphereShape = new CANNON.Sphere()
-// const sphereBody = new CANNON.Body({
-//     mass: 1,
-//     position: new CANNON.Vec3(0, 3, 0),
-//     shape: sphereShape,
-//     material: defaultMaterial
-// })
-
-// world.addBody(sphereBody)
-
 
 // Floor
 
@@ -124,26 +135,10 @@ floorBody.quaternion.setFromAxisAngle(
     new CANNON.Vec3( -1, 0, 0 ),
     Math.PI * 0.5
 )
-// sphereBody.applyLocalForce(new CANNON.Vec3(150, 0, 0), new CANNON.Vec3(0, 0, 0))
+
 world.addBody(floorBody)
 
 
-
-/**
- * Test sphere
- */
-// const sphere = new THREE.Mesh(
-//     new THREE.SphereGeometry(0.5, 32, 32),
-//     new THREE.MeshStandardMaterial({
-//         metalness: 0.3,
-//         roughness: 0.4,
-//         envMap: environmentMapTexture,
-//         envMapIntensity: 0.5
-//     })
-// )
-// sphere.castShadow = true
-// sphere.position.y = 0.5
-// scene.add(sphere)
 
 /**
  * Floor
@@ -259,13 +254,14 @@ const createBox = ( width, height, depth, position ) =>
     }
    )
    boxBody.position.copy(position)
+   boxBody.addEventListener('collide', playHitSound)
    world.addBody(boxBody)
   // Save objects to update
   objectsToUpdate.push({
     mesh: boxMesh,
     body: boxBody
   })
-   console.log(objectsToUpdate)
+   
 }
 
 createBox(Math.random(), Math.random(), Math.random(), {x:-1, y:4, z: 0})
@@ -296,7 +292,7 @@ const createSphere = (radius, position) =>
         material: defaultMaterial
     }
     )
-
+    body.addEventListener('collide', playHitSound)
     body.position.copy(position)
     world.addBody(body)
 
@@ -311,7 +307,7 @@ const createSphere = (radius, position) =>
 createSphere(0.5, {x: 0, y: 3, z: 0})
 
 
-// console.log(objectsToUpdate[0].mesh.position)
+
 /**
  * Animate
  */
@@ -326,7 +322,7 @@ const tick = () =>
 
 
     // Update physics world
-    // sphereBody.applyForce( new CANNON.Vec3(-0.5, 0, 0), sphereBody.position)
+    
     world.step(1 / 6, deltaTime, 3)
 
     for(const object of objectsToUpdate) 
@@ -335,14 +331,7 @@ const tick = () =>
         object.mesh.quaternion.copy(object.body.quaternion)
     }
 
-    // Update threejs world
-
-    // sphere.position.x = sphereBody.position.x
-    // sphere.position.y = sphereBody.position.y
-    // sphere.position.z = sphereBody.position.z
-    // alternative -> use the copy function
-    // sphere.position.copy(sphereBody.position)
-
+   
     // Update controls
     controls.update()
 
