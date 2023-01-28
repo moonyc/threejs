@@ -323,7 +323,7 @@ const tick = () =>
 
     // Update physics world
     
-    world.step(1 / 6, deltaTime, 3)
+    world.step(1 / 60, deltaTime, 3)
 
     for(const object of objectsToUpdate) 
     {
