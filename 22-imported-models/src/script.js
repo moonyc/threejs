@@ -5,6 +5,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
 import * as dat from 'lil-gui' 
 
 // Read about Web Assembly 
+// THREEJS EDITOR --> tiny 3d editor
 
 /**
  * Base
