@@ -185,6 +185,7 @@ const rgbShiftPass = new ShaderPass(RGBShiftShader)
 rgbShiftPass.enabled = false
 effectComposer.addPass(rgbShiftPass)
 
+// Unreal Bloom PASS
 const unrealBloomPass = new UnrealBloomPass()
 unrealBloomPass.strength = 0.3
 unrealBloomPass.radius = 1
@@ -235,6 +236,45 @@ gui.add(tintPass.material.uniforms.uTint.value, 'x').min(-1).max(1).step(0.001).
 gui.add(tintPass.material.uniforms.uTint.value, 'z').min(-1).max(1).step(0.001).name('green')
 gui.add(tintPass.material.uniforms.uTint.value, 'y').min(-1).max(1).step(0.001).name('blue')
 
+// Displacement pass
+const displacementShader = {
+    uniforms: {
+        tDiffuse: { value: null }, // t for texture
+        uTime: { value: null }
+       
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main()
+      {
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        vUv = uv;
+      }
+    `,
+    // sampler2D is the type for the textures
+    fragmentShader: `
+      uniform sampler2D tDiffuse; 
+      uniform float uTime; 
+
+      varying vec2 vUv;
+
+      void main()
+      {
+        vec2 newUv = vec2(
+            vUv.x,
+            vUv.y + sin(vUv.x * 10.0 + uTime) * 0.1
+        );
+        
+        vec4 color = texture2D(tDiffuse, newUv);
+        
+        gl_FragColor = color;
+      }
+    `
+}
+
+const displacementPass = new ShaderPass(displacementShader)
+displacementPass.material.uniforms.uTime.value = 0
+effectComposer.addPass(displacementPass)
 
 // Gamma correction pass
 const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader)
@@ -257,6 +297,8 @@ const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
 
+    // Update passes
+    displacementPass.material.uniforms.uTime.value = elapsedTime
     // Update controls
     controls.update()
 
