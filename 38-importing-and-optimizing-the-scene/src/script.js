@@ -47,14 +47,15 @@ bakedTexture.flipY = false
 bakedTexture.encoding = THREE.sRGBEncoding
 
 // Pole light material
-const purple = '#ffffe1'
+const purple = '#FFE6E6'
+const orange = '#ffffff'
 
-const poleLightMaterial = new THREE.MeshBasicMaterial({ color: purple})
+const poleLightMaterial = new THREE.MeshBasicMaterial({ color: purple })
 
 // Portal light material
-const orange = '#FF9B52'
 
-const portalLightMaterial = new THREE.MeshBasicMaterial({ color: orange})
+
+const portalLightMaterial = new THREE.MeshBasicMaterial({ color: orange })
 /**
  * Model
  */
@@ -62,10 +63,11 @@ const portalLightMaterial = new THREE.MeshBasicMaterial({ color: orange})
 gltfLoader.load(
     'portal-2.glb',
     (gltf) => {
-        gltf.scene.traverse((child) => {
-            child.material = bakedMaterial
-        })
+        // gltf.scene.traverse((child) => {
+        //     child.material = bakedMaterial
+        // })
 
+        const bakedMesh = gltf.scene.children.find(child => child.name === 'baked')
         const portalLightMesh = gltf.scene.children.find((child) => {
             return child.name === 'portalLight'
          })
@@ -77,6 +79,7 @@ gltfLoader.load(
             return child.name === 'poleLightB'
          })
 
+         bakedMesh.material = bakedMaterial
          poleLightAMesh.material = poleLightMaterial
          poleLightBMesh.material = poleLightMaterial
          portalLightMesh.material = portalLightMaterial
