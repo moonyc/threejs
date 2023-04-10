@@ -6,6 +6,6 @@ const root = createRoot(document.querySelector('#root'))
 
 root.render(
     <>
-        <App clickersCount={4} children={ <h1> My Application </h1> }/>
+        <App clickersCount={7} children={ <h1> My Application </h1> }/>
     </>
 )

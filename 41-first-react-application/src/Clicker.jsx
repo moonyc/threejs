@@ -1,11 +1,15 @@
-import { useState, useEffect } from "react"
+import { useRef, useState, useEffect } from "react"
 
 export default function Clicker({ increment, keyName, color = ' darkOrchid ' }) {
 
-    const [count, updateCount] = useState(parseInt(localStorage.getItem(keyName) ?? 0)) // nullish coalescing operator
+    const [count, setCount] = useState(parseInt(localStorage.getItem(keyName) ?? 0)) // nullish coalescing operator
     // Go check mouse events in the react's documentation
 
+    const buttonRef = useRef()
+    
     useEffect(() => {
+      buttonRef.current.style.backgroundColor = "papayawhip"
+      buttonRef.current.style.color = "salmon"
       return () => 
        {
             localStorage.removeItem(keyName)
@@ -16,7 +20,7 @@ export default function Clicker({ increment, keyName, color = ' darkOrchid ' }) 
     }, [ count ])
     const buttonClick = () => 
     {
-       updateCount(count => count + 1)
+       setCount(count + 1)
        increment()
     }
     
@@ -24,6 +28,6 @@ export default function Clicker({ increment, keyName, color = ' darkOrchid ' }) 
     <>
        <h2> Clicker </h2>
        <h3 style={{ color }}> Clicks count: {count} </h3>
-       <button onClick={buttonClick}>Click me </button>
+       <button ref={buttonRef} onClick={buttonClick}>Click me </button>
     </>)
 }

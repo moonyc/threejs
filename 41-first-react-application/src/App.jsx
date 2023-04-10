@@ -1,5 +1,7 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import Clicker from "./Clicker"
+import People from "./People"
+
 
 export default function App({ clickersCount, children }) 
 {
@@ -17,19 +19,39 @@ export default function App({ clickersCount, children })
     {
         updateCount(count + 1)
     }
+    
+   
 
+    // we send a function and a dependencies array to useMemo
+    const colors = useMemo(() => {
+         const colors = []
+
+        for(let i = 0; i < clickersCount; i++) {
+        colors.push(`hsl(${Math.random() * 360}, 100%, 70%)`)
+         }
+
+         return colors
+    }, [clickersCount])
+    
     return (
         <>
         {children}
         <h2> Total count : {count}</h2>
         <button onClick={toggleClickerClick}> { hasClicker ? 'Hide' : 'Show'} Clicker </button>
         { hasClicker && <> 
-        {[...Array(clickersCount).map(() => {
-            return <Clicker increment={increment} keyName="countA" color={`hsl(${Math.random() * 360}, 100%, 70%)`} />
-        })]}
+        {[...Array(clickersCount)].map((value, index) => 
+            <Clicker 
+            increment={increment} 
+            key={`count${index}`}
+            keyName={`count${index}`}
+            color={colors[index]} />
+            )}
+        
+      
         
        
         </> }
+        <People />
         </>
     )
 }
