@@ -10,6 +10,13 @@ export default function Experience()
     const cube = useRef()
     const group = useRef()
      useFrame((state, delta) => {
+
+        // const angle = state.clock.elapsedTime
+        // state.camera.position.x = Math.sin(angle) * 8
+        // state.camera.position.z = Math.cos(angle) * 8
+
+        // state.camera.lookAt(0, 0, 0)
+
         cube.current.rotation.y += delta
         // group.current.rotation.y += delta
      })
