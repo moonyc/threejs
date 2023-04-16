@@ -30,8 +30,13 @@ export default function Experience()
             step: 0.01
         }
     })
+
+    const {perfVisible } = useControls({
+        perfVisible: true
+    })
     return <>
-         <Perf position="top-left"/>
+        { perfVisible ? <Perf position="top-left"/> : null}
+         
         <OrbitControls makeDefault />
 
         <directionalLight position={ [ 1, 2, 3 ] } intensity={ 1.5 } />
