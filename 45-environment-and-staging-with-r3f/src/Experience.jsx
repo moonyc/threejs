@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber'
-import { Environment, Sky, ContactShadows , RandomizedLight , AccumulativeShadows, softShadows, BakeShadows, OrbitControls, useHelper } from '@react-three/drei'
+import { Lightformer, Environment, Sky, ContactShadows , RandomizedLight , AccumulativeShadows, softShadows, BakeShadows, OrbitControls, useHelper } from '@react-three/drei'
 import { useRef } from 'react'
 import { Perf } from 'r3f-perf'
 import * as THREE from 'three'
@@ -50,12 +50,21 @@ export default function Experience()
             //     './environmentMaps/2/nz.jpg',
             // ]}
             // files={'./environmentMaps/the_sky_is_on_fire_2k.hdr'}
-            preset="sunset"
+             preset="sunset"
         > 
-         <mesh position-z={-5} scale={10}>
+         <color args={['#000000']} attach="background" />
+         <Lightformer 
+         position-z={-5} 
+         scale={10} 
+         color="red" 
+         intensity={10} 
+         form="ring"
+
+         />
+         {/* <mesh position-z={-5} scale={10}>
             <planeGeometry />
-            <meshBasicMaterial color="red" /> 
-        </mesh>
+            <meshBasicMaterial color={[2, 0, 0]} /> 
+        </mesh> */}
         </Environment>
 
        
