@@ -35,12 +35,17 @@ export default function Experience()
         sunPosition: { value: [1,2,3]}
     })
 
-    const { envMapIntensity } = useControls('env', {
-        envMapIntensity: {value:3.5, min:0, max:12}
+  
+
+    const { envMapIntensity, envMapHeight, envMapRadius, envMapScale } = useControls('environment map', {
+        envMapIntensity: { value: 7, min: 0, max: 12 },
+        envMapHeight: { value: 7, min: 0, max: 100 },
+        envMapRadius: { value: 28, min: 10, max: 1000 },
+        envMapScale: { value: 100, min: 10, max: 1000 }
     })
     return <>
         <Environment 
-            background
+            
             // files={[
             //     './environmentMaps/2/px.jpg',
             //     './environmentMaps/2/nx.jpg',
@@ -51,8 +56,13 @@ export default function Experience()
             // ]}
             // files={'./environmentMaps/the_sky_is_on_fire_2k.hdr'}
              preset="sunset"
+             ground={{
+                height: envMapHeight,
+        radius: envMapRadius,
+        scale: envMapScale
+             }}
         > 
-         <color args={['#000000']} attach="background" />
+         {/* <color args={['#000000']} attach="background" />
          <Lightformer 
          position-z={-5} 
          scale={10} 
@@ -60,7 +70,7 @@ export default function Experience()
          intensity={10} 
          form="ring"
 
-         />
+         /> */}
          {/* <mesh position-z={-5} scale={10}>
             <planeGeometry />
             <meshBasicMaterial color={[2, 0, 0]} /> 
@@ -94,7 +104,7 @@ export default function Experience()
         </AccumulativeShadows> */}
 
         <ContactShadows 
-            position={ [0, -0.99, 0] }
+            position={ [0, 0, 0] }
             scale={10}
             resolution={512}
             far={5}
@@ -121,20 +131,20 @@ export default function Experience()
 
          {/* <Sky sunPosition={sunPosition}/>  */}
          
-        <mesh castShadow position-x={ - 2 }>
+        <mesh castShadow position-x={ - 2 } position-y={1}>
             <sphereGeometry />
             <meshStandardMaterial color="orange" envMapIntensity={envMapIntensity}/>
         </mesh>
 
-        <mesh castShadow ref={ cube } position-x={ 2 } scale={ 1.5 }>
+        <mesh castShadow ref={ cube } position-x={ 2 } scale={ 1.5 } position-y={1}>
             <boxGeometry />
             <meshStandardMaterial color="mediumpurple" envMapIntensity={envMapIntensity}/>
         </mesh>
 
-        <mesh  position-y={ - 1 } rotation-x={ - Math.PI * 0.5 } scale={ 10 }>
+        {/* <mesh  rotation-x={ - Math.PI * 0.5 } scale={ 10 } position-y={0}>
             <planeGeometry />
             <meshStandardMaterial color="greenyellow" envMapIntensity={envMapIntensity}/>
-        </mesh>
+        </mesh> */}
 
     </>
 }
