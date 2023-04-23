@@ -43,7 +43,7 @@ export default function Experience()
     })
 
     const drunkProps = useControls('Drunk Effect', {
-        frequency: { value: 2, min: 1, max: 20},
+        frequency: { value: 10, min: 1, max: 20},
         amplitude: { value: 0.1, min: 0, max: 1}
     })
     return <>
@@ -79,8 +79,7 @@ export default function Experience()
             {/* <SSR  {...ssrProps} />  */}
             <Drunk 
                 ref={ drunkRef }
-                frequency={ 2 }
-                amplitude={ 0.1 }
+                {...drunkProps}
             />
         </EffectComposer>
         <Perf position="top-left" />

@@ -14,6 +14,7 @@ const fragmentShader = /* glsl */`
    vec4 color = inputColor;
    color.rgb *= vec3(0.8, 1.0, 0.5);
    outputColor = color;
+  
 }`
 export default class DrunkEffect extends Effect 
 {
@@ -24,11 +25,11 @@ export default class DrunkEffect extends Effect
             fragmentShader,
             {
               uniforms: new Map([
-                [ 'frequency', { value: new Uniform(frequency) }],
-                [ 'amplitude', { value: new Uniform(amplitude) }]
+                ['frequency', new Uniform(frequency)],
+                ['amplitude', new Uniform(amplitude)]
               ])
             }
             )
-            
+        
     }
 }
