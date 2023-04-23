@@ -28,7 +28,9 @@ export default function Experience()
             blendFunction={ BlendFunction.SOFT_LIGHT }
            /> */}
            <Bloom 
-            mipmapBlur
+              mipmapBlur
+              intensity={0.5}
+              luminanceThreshold={0}
            />
         </EffectComposer>
         <Perf position="top-left" />
@@ -40,12 +42,12 @@ export default function Experience()
 
         <mesh castShadow position-x={ - 2 }>
             <sphereGeometry />
-            <meshStandardMaterial color="orange" emissive="orange" emissiveIntensity={2} toneMapped={false}/>
+            <meshBasicMaterial color={ [ 1.5, 1, 4 ] } toneMapped={ false }/>
         </mesh>
 
         <mesh castShadow position-x={ 2 } scale={ 1.5 }>
             <boxGeometry />
-            <meshStandardMaterial color={[4, 1, 2]} toneMapped={false} />
+            <meshStandardMaterial color="orange" emissive="orange" emissiveIntensity={2} toneMapped={false} />
         </mesh>
 
         <mesh receiveShadow position-y={ - 1 } rotation-x={ - Math.PI * 0.5 } scale={ 10 }>
