@@ -80,6 +80,7 @@ export default function Experience()
             <Drunk 
                 ref={ drunkRef }
                 {...drunkProps}
+                blendFunction={ BlendFunction.DARKEN }
             />
         </EffectComposer>
         <Perf position="top-left" />
