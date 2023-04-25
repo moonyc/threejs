@@ -1,5 +1,6 @@
 import { OrbitControls } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
+import { CuboidCollider, Debug, RigidBody, Physics } from '@react-three/rapier'
 
 export default function Experience()
 {
@@ -11,21 +12,32 @@ export default function Experience()
 
         <directionalLight castShadow position={ [ 1, 2, 3 ] } intensity={ 1.5 } />
         <ambientLight intensity={ 0.5 } />
+    <Physics>
+        <Debug />
+        <RigidBody colliders="ball">
+            <mesh castShadow position={ [ 0, 4, - 0.25 ] }>
+                <sphereGeometry />
+                <meshStandardMaterial color="orange" />
+            </mesh>
+        </RigidBody>
 
-        <mesh castShadow position={ [ - 2, 2, 0 ] }>
-            <sphereGeometry />
-            <meshStandardMaterial color="orange" />
-        </mesh>
+        <RigidBody colliders={ false } position={[ 0, 1, - 0.25]} rotation={ [ Math.PI / 10, 0, 0] }>
+            <CuboidCollider args={ [ 1.5, 1.5, 0.5  ] }/>
+            <CuboidCollider args={ [ 0.25, 1, 0.25] } position={ [ 0, 0, 1] } rotation={ [ -Math.PI * 0.35, 0, 0] } />
+            <mesh castShadow position={ [ 0, 1, - 0.25 ] } rotation={ [ Math.PI / 10 , 0, 0 ] }>
+                <torusGeometry />
+                <meshStandardMaterial color="mediumpurple" />
+            </mesh>
+        </RigidBody>
+       
 
-        <mesh castShadow position={ [ 2, 2, 0 ] }>
-            <boxGeometry />
-            <meshStandardMaterial color="mediumpurple" />
-        </mesh>
+        <RigidBody type="fixed">
+            <mesh receiveShadow position-y={ - 1.25 }>
+                <boxGeometry args={ [ 10, 0.5, 10 ] } />
+                <meshStandardMaterial color="greenyellow" />
+            </mesh>
+        </RigidBody> 
 
-        <mesh receiveShadow position-y={ - 1.25 }>
-            <boxGeometry args={ [ 10, 0.5, 10 ] } />
-            <meshStandardMaterial color="greenyellow" />
-        </mesh>
-
+    </Physics>
     </>
 }
