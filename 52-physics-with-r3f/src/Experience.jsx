@@ -1,7 +1,7 @@
 import { OrbitControls, useGLTF } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
-import { BallCollider, CuboidCollider, Debug, RigidBody, Physics, CylinderCollider } from '@react-three/rapier'
-import { useRef, useState} from 'react'
+import { InstancedRigidBodies , BallCollider, CuboidCollider, Debug, RigidBody, Physics, CylinderCollider } from '@react-three/rapier'
+import { useMemo, useEffect, useRef, useState} from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
@@ -9,6 +9,7 @@ export default function Experience()
 {
     const [ hitSound ] = useState(() => new Audio('./hit.mp3'))
     const cube = useRef()
+    const cubes= useRef()
     const twister= useRef()
     const cubeJump = () => 
     {
@@ -43,6 +44,36 @@ export default function Experience()
     }
 
     const hamburger = useGLTF('./hamburger.glb')
+    const cubesCount = 500
+    const cubesTrasnforms = useMemo(() => {
+        const positions = []
+        const rotations = []
+        const scales = []
+        for(let i = 0; i < cubesCount; i++)
+        {
+            positions.push([
+                (Math.random() - 0.5) * 8,
+                 6 + i * 0.2,
+                (Math.random() - 0.5) * 8,
+            ])
+            rotations.push([0,0,0])
+            scales.push([1,1,1])
+        }
+        return { positions, rotations, scales}
+    }, [])
+    // useEffect(() => 
+    // {
+    //    for(let i = 0; i < cubesCount; i++)
+    //    {
+    //     const matrix = new THREE.Matrix4()
+    //     matrix.compose(
+    //         new THREE.Vector3(i*2, 0, 0),
+    //         new THREE.Quaternion(),
+    //         new THREE.Vector3(1,1,1)
+    //     )
+    //     cubes.current.setMatrixAt(i, matrix)
+    //    }
+    // }, [])
     return <>
 
         <Perf position="top-left" />
@@ -52,7 +83,7 @@ export default function Experience()
         <directionalLight castShadow position={ [ 1, 2, 3 ] } intensity={ 1.5 } />
         <ambientLight intensity={ 0.5 } />
     <Physics gravity={ [0, - 9.8, 0] }>
-        <Debug />
+        {/* <Debug /> */}
         <RigidBody colliders="ball" restitution={ 1 }>
             <mesh castShadow position={ [ 0, 4, - 0.25 ] }>
                 <sphereGeometry />
@@ -117,6 +148,25 @@ export default function Experience()
            <CylinderCollider args={[ 0.5, 1.25 ]} />
             <primitive object={ hamburger.scene } scale={0.25} />
         </RigidBody>
+        
+        {/* Stress test */}
+        <RigidBody type="fixed">
+            <CuboidCollider args={ [ 5, 2, 0.5 ]} position={[ 0, 1, 5.25 ]} />
+            <CuboidCollider args={ [ 5, 2, 0.5 ]} position={[ 0, 1, - 5.25 ]} />
+            <CuboidCollider args={ [ 0.5, 2, 5 ]} position={[ 5.25 , 1, 0]} />
+            <CuboidCollider args={ [ 0.5, 2, 5 ]} position={[ - 5.25 , 1, 0]} />  
+        </RigidBody>
+
+        <InstancedRigidBodies
+          positions={cubesTrasnforms.positions}
+          rotations={cubesTrasnforms.rotations}
+          scales={cubesTrasnforms.scales}
+        >
+        <instancedMesh ref={cubes} castShadow args={[ null, null, cubesCount]}>
+           <boxGeometry />
+           <meshStandardMaterial color="tomato" />
+        </instancedMesh>
+        </InstancedRigidBodies>
     </Physics>
     </>
 }
