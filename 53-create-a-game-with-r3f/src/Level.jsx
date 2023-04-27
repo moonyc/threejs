@@ -9,16 +9,6 @@ import BlockLimbo from './BlockLimbo'
 import BlockAxe from './BlockAxe'
 import BlockEnd from './BlockEnd'
 
-// THREE materials, geometries and settings
-
-THREE.ColorManagement.legacyMode = false
-export const boxGeometry = new THREE.BoxGeometry(1,1,1)
-
-export const floor1Material = new THREE.MeshStandardMaterial({ color: 'limegreen'})
-export const floor2Material = new THREE.MeshStandardMaterial({ color: 'greenyellow'})
-export const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 'orangered'})
-export const wallMaterial = new THREE.MeshStandardMaterial({ color: 'slategrey'})
-
 
 
 
@@ -26,9 +16,7 @@ export const wallMaterial = new THREE.MeshStandardMaterial({ color: 'slategrey'}
 
 export function Level({
     count = 5, 
-    types=[BlockSpinner, BlockAxe, BlockLimbo],
-    materials = [floor1Material, floor2Material, obstacleMaterial],
-    geometries = [boxGeometry]
+    types=[BlockSpinner, BlockAxe, BlockLimbo]
 }) 
 {
     const blocks = useMemo(() => 
@@ -46,7 +34,9 @@ export function Level({
     return <>
        
 
-        <BlockStart position={[0,0,0]} material={floor1Material} geometry={boxGeometry} />
+        <BlockStart position={[0,0,0]} />
+        { blocks.map((Block, index) => <Block key={ index } position={ [0,0, - (index + 1) * 4] }/>)}
+        <BlockEnd position={[0, 0, - (count + 1) * 4]} />
         
     </>
 }

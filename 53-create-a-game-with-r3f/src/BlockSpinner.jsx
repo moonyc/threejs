@@ -3,8 +3,9 @@ import { useRef, useState } from 'react'
 import { useFrame} from '@react-three/fiber'
 import * as THREE from 'three'
 
+import { floor2Material, boxGeometry, obstacleMaterial } from './threeVariables'
 
-export default function BlockSpinner({ position = [0,0,0], material, geometry, obstacleMaterial}) 
+export default function BlockSpinner({ position = [0,0,0]}) 
 {
     const obstacle = useRef()
     const [speed ] = useState(()=> (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1 ))
@@ -19,8 +20,8 @@ export default function BlockSpinner({ position = [0,0,0], material, geometry, o
 
     return <group position={position}>
      <mesh
-       material={material}
-       geometry={geometry} 
+       material={floor2Material}
+       geometry={boxGeometry} 
        scale={[4, 0.2, 4]}
        position={[0, -0.1, 0]} 
        receiveShadow
@@ -34,7 +35,7 @@ export default function BlockSpinner({ position = [0,0,0], material, geometry, o
        >
     <mesh 
       material={obstacleMaterial}
-      geometry={geometry}
+      geometry={boxGeometry}
       scale={[3.5, 0.3, 0.3]}
       castShadow
       receiveShadow

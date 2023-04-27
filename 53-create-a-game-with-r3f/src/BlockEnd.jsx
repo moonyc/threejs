@@ -1,7 +1,9 @@
 import { useGLTF } from "@react-three/drei"
 import { RigidBody } from "@react-three/rapier"
 
-export default function BlockEnd({ position = [0,0,0], material, geometry}) 
+import { boxGeometry, floor1Material } from "./threeVariables"
+
+export default function BlockEnd({ position = [0,0,0]}) 
 {
     const hamburger = useGLTF('./hamburger.glb')
     hamburger.scene.children.forEach((mesh) => {
@@ -9,8 +11,8 @@ export default function BlockEnd({ position = [0,0,0], material, geometry})
     })
     return <group position={position}>
      <mesh
-       material={material}
-       geometry={geometry} 
+       material={floor1Material}
+       geometry={boxGeometry} 
        scale={[4, 0.2, 4]}
        position={[0, 0, 0]} 
        receiveShadow
