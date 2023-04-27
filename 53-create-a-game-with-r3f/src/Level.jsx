@@ -8,6 +8,7 @@ import BlockSpinner from './BlockSpinner'
 import BlockLimbo from './BlockLimbo'
 import BlockAxe from './BlockAxe'
 import BlockEnd from './BlockEnd'
+import Bounds from './Bounds'
 
 
 
@@ -37,6 +38,6 @@ export function Level({
         <BlockStart position={[0,0,0]} />
         { blocks.map((Block, index) => <Block key={ index } position={ [0,0, - (index + 1) * 4] }/>)}
         <BlockEnd position={[0, 0, - (count + 1) * 4]} />
-        
+        <Bounds  length={ count + 2} />
     </>
 }
