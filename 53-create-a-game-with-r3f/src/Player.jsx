@@ -18,7 +18,7 @@ export default function Player()
         const rapierWorld = world.raw()
         const hit = rapierWorld.castRay(ray, 10, true)
 
-        console.log(hit.toi)
+        
         body.current.applyImpulse({ x:0, y: 0.5, z:0})
     }
     useEffect(() => 
