@@ -1,7 +1,16 @@
+import { useRef } from "react"
+import { useFrame } from "@react-three/fiber"
+
 export default function Lights()
 {
+    const light = useRef()
+
+    useFrame((state) =>
+    { 
+    })
     return <>
         <directionalLight
+            ref={light}
             castShadow
             position={ [ 4, 4, 1 ] }
             intensity={ 1.5 }
