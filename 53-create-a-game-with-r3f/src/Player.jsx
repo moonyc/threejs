@@ -3,6 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
 import { useState, useEffect, useRef } from "react";
 import * as THREE from 'three'
+import useGame from "./stores/useGame";
 
 export default function Player()
 {
@@ -14,6 +15,18 @@ export default function Player()
 
    const [ smoothedCameraPosition ] = useState(() => new THREE.Vector3( 10, 10, 10 ))
    const [ smoothedCameraTarget ] = useState(() => new THREE.Vector3())
+
+   const start = useGame((state) => state.start)
+   const end = useGame((state) => state.end)
+   const restart = useGame((state) => state.restart)
+   const blocksCount = useGame((state) => state.blocksCount)
+
+   const reset = () =>
+   {
+      body.current.setTranslation({ x:0, y:1, z:0 })
+      body.current.setLinvel({ x:0, y:0, z:0 })
+      body.current.setAngvel({ x:0, y:0, z:0 })
+   }
 
     const jump = () =>
     {
@@ -31,8 +44,15 @@ export default function Player()
      
     useEffect(() => 
     {
-      
-       subscribeKeys(
+      const unsubscribeReset =  useGame.subscribe(
+          (state) => state.phase,
+          (value) =>
+          {
+            if(value === 'ready')
+              reset()
+          }
+       )
+       const unsubscribeJump = subscribeKeys(
         (state) => state.jump,
         (value) => 
         {
@@ -41,9 +61,17 @@ export default function Player()
         }
        )
       
+      const unsubscribeAny = subscribeKeys(
+      () => 
+      {
+          start()
+      })
+
        return () => 
        {
+         unsubscribeReset()
          unsubscribeJump()
+         unsubscribeAny()
        }
 
        
@@ -106,6 +134,17 @@ export default function Player()
        state.camera.position.copy(smoothedCameraPosition)
        state.camera.lookAt(smoothedCameraTarget)
        
+      //  Phases
+
+      if(bodyPosition.z < - (blocksCount * 4 + 2))
+      {
+         end()
+      }
+
+      if(bodyPosition.y < -4)
+      {
+         restart()
+      }
     })
 
     return <>

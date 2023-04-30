@@ -3,9 +3,11 @@ import Lights from './Lights.jsx'
 import {Level} from './Level.jsx'
 import { Physics, Debug } from '@react-three/rapier'
 import Player from './Player.jsx'
+import useGame from './stores/useGame.jsx'
 
 export default function Experience()
 {
+    const blocksCount = useGame((state) => state.blockCount )
     return <>
         
         {/* <OrbitControls makeDefault /> */}
@@ -13,7 +15,7 @@ export default function Experience()
         <Physics>
             {/* <Debug /> */}
             <Lights />
-            <Level />
+            <Level count={blocksCount}/>
             <Player />
         </Physics>
 
