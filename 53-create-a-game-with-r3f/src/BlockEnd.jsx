@@ -1,5 +1,6 @@
 import { useGLTF } from "@react-three/drei"
 import { RigidBody } from "@react-three/rapier"
+import { Text } from '@react-three/drei'
 
 import { boxGeometry, floor1Material } from "./threeVariables"
 
@@ -10,6 +11,14 @@ export default function BlockEnd({ position = [0,0,0]})
       mesh.castShadow = true
     })
     return <group position={position}>
+     <Text
+    font="./bebas-neue-v9-latin-regular.woff"
+    scale={ 2 }
+    position={ [ 0, 2.25, 2 ] }
+     >
+    FINISH
+    <meshBasicMaterial toneMapped={ false } />
+    </Text>
      <mesh
        material={floor1Material}
        geometry={boxGeometry} 
@@ -17,6 +26,7 @@ export default function BlockEnd({ position = [0,0,0]})
        position={[0, 0, 0]} 
        receiveShadow
     />
+   
     <RigidBody
        type="fixed"
        colliders="hull"

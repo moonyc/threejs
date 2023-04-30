@@ -136,7 +136,7 @@ export default function Player()
        
       //  Phases
 
-      if(bodyPosition.z < - (blocksCount * 4 + 4))
+      if(bodyPosition.z < - (blocksCount * 4 + 2))
       {
          end()
       }
