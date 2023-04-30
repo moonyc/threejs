@@ -4,7 +4,12 @@ import { subscribeWithSelector } from 'zustand/middleware'
 export default create(subscribeWithSelector((set) => 
 {
     return {
-        blocksCount: 3,
+        blocksCount: 10,
+        /**
+         * Time
+         */
+        startTime: 0,
+        endTime: 0,
         /**
          * Phase
          */
@@ -14,7 +19,7 @@ export default create(subscribeWithSelector((set) =>
            set((state) => 
            {
             if(state.phase === 'ready')
-               return { phase: 'playing'}
+               return { phase: 'playing', startTime: Date.now()}
             return {}
            })
         },
@@ -33,7 +38,7 @@ export default create(subscribeWithSelector((set) =>
             set((state) => 
             {
                 if(state.phase === 'playing')
-                    return { phase: 'ended' } 
+                    return { phase: 'ended', endTime: Date.now()} 
                 
                 return {}
             })

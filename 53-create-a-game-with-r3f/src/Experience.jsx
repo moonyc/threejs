@@ -7,7 +7,7 @@ import useGame from './stores/useGame.jsx'
 
 export default function Experience()
 {
-    const blocksCount = useGame((state) => state.blockCount )
+    const blocksCount = useGame((state) => state.blocksCount )
     return <>
         
         {/* <OrbitControls makeDefault /> */}
