@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { Canvas } from '@react-three/fiber'
 import Experience from './Experience.jsx'
 import { KeyboardControls } from '@react-three/drei'
+import { Perf } from 'r3f-perf'
 
 const root = ReactDOM.createRoot(document.querySelector('#root'))
 
@@ -24,6 +25,7 @@ root.render(
             position: [ 2.5, 4, 6 ]
         } }
         >
+            <Perf />
             <Experience />
         </Canvas>
     </KeyboardControls>
